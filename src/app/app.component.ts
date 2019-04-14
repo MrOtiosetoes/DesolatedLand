@@ -10,6 +10,7 @@ import { HostListener } from '@angular/core';
 export class AppComponent {
   title = 'AngularGame';
   @ViewChild('gameCanvas') gameCanvas: ElementRef;
+  @ViewChild('audio') bgAudio: ElementRef;
   public context: CanvasRenderingContext2D;
   x = 0;
   y = 0;
@@ -38,10 +39,14 @@ export class AppComponent {
   }
 
   private playMusic() {
+    
     let audio = new Audio();
-    audio.src = "/assets/audio/tfh.mid";
+    audio.src = "/assets/audio/tfh.mp3";
     audio.load();
-   audio.play();
+   audio.play().then(() => {console.log("ok")}).catch((e) => {
+     console.log("err", e);
+   }
+   );
   }
 
   private handleInput() {
