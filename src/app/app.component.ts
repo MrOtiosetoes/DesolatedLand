@@ -28,8 +28,16 @@ export class AppComponent {
   ngAfterViewInit(): void {
     this.initializeCanvas();
     this.initializeTileset();
-    this.playMusic();
-    
+    this.input.moveToCallback = (left,top) => {
+      left -= this.gameCanvas.nativeElement.offsetLeft;
+      top -= this.gameCanvas.nativeElement.offsetTop;
+      let x = Math.floor(left / this.tileSize);
+      let y = Math.floor(top / this.tileSize);
+      console.log("cb na", x, y);
+      
+    }
+    //this.playMusic();
+
     setInterval(() => {
       this.handleInput();
       this.drawCanvas();

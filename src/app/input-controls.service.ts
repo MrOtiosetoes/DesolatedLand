@@ -5,15 +5,27 @@ import { Injectable } from '@angular/core';
 })
 export class InputControlsService {
 
+  lastX: -1;
+  lastY: -1;
+  hasMoved : boolean;
+  moveToCallback :  (x: number, y: number) => void;
+
+
   touchStart(e) {
-    console.log("start", e);
+    let touch = e.touches[0];
+    this.hasMoved = false;
+    this.lastX = touch.clientX;
+    this.lastY = touch.clientY;
   }
   touchEnd(e) {
-    console.log("end", e);
+    if (!this.hasMoved && this.moveToCallback) this.moveToCallback(this.lastX, this.lastY);
   }
   
   touchMove(e) {
-    console.log("move", e);
+    let touch = e.touches[0];
+    this.hasMoved = true;
+    this.lastX = touch.clientX;
+    this.lastY = touch.clientY;
   }
 
   //#region keyboard
