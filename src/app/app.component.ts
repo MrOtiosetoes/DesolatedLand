@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ViewChild, ElementRef } from '@angular/core';
 import { HostListener } from '@angular/core';
+import { InputControlsService } from './input-controls.service';
 
 @Component({
   selector: 'app-root',
@@ -15,14 +16,15 @@ export class AppComponent {
   x = 0;
   y = 0;
   stepSize = 2;
-  up = false;
-  down = false;
-  left = false;
-  right = false;
   image;
   tileSize = 32;
   width = 20;
   height = 20;
+  input: InputControlsService;
+
+  constructor(input: InputControlsService) {
+    this.input = input;
+  }
 
   ngAfterViewInit(): void {
     this.context = (<HTMLCanvasElement>this.gameCanvas.nativeElement).getContext('2d');
@@ -39,24 +41,24 @@ export class AppComponent {
   }
 
   private playMusic() {
-    
+
     let audio = new Audio();
     audio.src = "/assets/audio/tfh.mp3";
     audio.load();
-   audio.play().then(() => {console.log("ok")}).catch((e) => {
-     console.log("err", e);
-   }
-   );
+    audio.play().then(() => { console.log("ok") }).catch((e) => {
+      console.log("err", e);
+    }
+    );
   }
 
   private handleInput() {
-    if (this.up)
+    if (this.input.up)
       this.y -= this.stepSize;
-    if (this.down)
+    if (this.input.down)
       this.y += this.stepSize;
-    if (this.left)
+    if (this.input.left)
       this.x -= this.stepSize;
-    if (this.right)
+    if (this.input.right)
       this.x += this.stepSize;
   }
 
@@ -64,7 +66,7 @@ export class AppComponent {
     for (var y = 0; y < this.height; y++) {
       for (var x = 0; x < this.width; x++) {
 
-        this.context.drawImage(this.image, 0, 0, this.tileSize, this.tileSize, x*this.tileSize, y*this.tileSize, this.tileSize, this.tileSize);
+        this.context.drawImage(this.image, 0, 0, this.tileSize, this.tileSize, x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
       }
 
     }
@@ -74,19 +76,11 @@ export class AppComponent {
 
   @HostListener('window:keydown', ['$event'])
   handleKeyDownEvent(event: KeyboardEvent) {
-    console.log("down: ", event.key);
-    if (event.key == "ArrowUp") this.up = true;
-    if (event.key == "ArrowDown") this.down = true;
-    if (event.key == "ArrowLeft") this.left = true;
-    if (event.key == "ArrowRight") this.right = true;
+    this.input.handleKeyDownEvent(event);
   }
 
   @HostListener('window:keyup', ['$event'])
   handleKeyUpEvent(event: KeyboardEvent) {
-    console.log("up: ", event.key);
-    if (event.key == "ArrowUp") this.up = false;
-    if (event.key == "ArrowDown") this.down = false;
-    if (event.key == "ArrowLeft") this.left = false;
-    if (event.key == "ArrowRight") this.right = false;
+    this.input.handleKeyUpEvent(event);
   }
 }
