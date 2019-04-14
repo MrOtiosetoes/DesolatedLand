@@ -4,6 +4,19 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class InputControlsService {
+
+  touchStart(e) {
+    console.log("start", e);
+  }
+  touchEnd(e) {
+    console.log("end", e);
+  }
+  
+  touchMove(e) {
+    console.log("move", e);
+  }
+
+  //#region keyboard
   up = false;
   down = false;
   left = false;
@@ -23,5 +36,6 @@ export class InputControlsService {
     if (event.key == "ArrowLeft") this.left = false;
     if (event.key == "ArrowRight") this.right = false;
   }
+  //#endregion
   
 }

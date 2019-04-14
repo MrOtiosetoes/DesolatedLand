@@ -27,17 +27,35 @@ export class AppComponent {
   }
 
   ngAfterViewInit(): void {
-    this.context = (<HTMLCanvasElement>this.gameCanvas.nativeElement).getContext('2d');
-    this.image = new Image();
-    this.image.src = '/assets/tileset.png';
-    this.gameCanvas.nativeElement.width = this.tileSize * this.width;
-    this.gameCanvas.nativeElement.height = this.tileSize * this.height;
-
+    this.initializeCanvas();
+    this.initializeTileset();
     this.playMusic();
+    
     setInterval(() => {
       this.handleInput();
       this.drawCanvas();
     }, 50);
+  }
+
+  private initializeTileset() {
+    this.image = new Image();
+    this.image.src = '/assets/tileset.png';
+  }
+
+  private initializeCanvas() {
+    let canvas = (<HTMLCanvasElement>this.gameCanvas.nativeElement);
+    this.context = canvas.getContext('2d');
+    canvas.addEventListener("touchend", (e) => {
+      this.input.touchEnd(e);
+    });
+    canvas.addEventListener("touchstart", (e) => {
+      this.input.touchStart(e);
+    });
+    canvas.addEventListener("touchmove", (e) => {
+      this.input.touchMove(e);
+    });
+    this.gameCanvas.nativeElement.width = this.tileSize * this.width;
+    this.gameCanvas.nativeElement.height = this.tileSize * this.height;
   }
 
   private playMusic() {
