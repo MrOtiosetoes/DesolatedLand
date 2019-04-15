@@ -18,7 +18,7 @@ export class AppComponent {
   image;
   tileSize = 32;
   input: InputControlsService;
-  game : GameService;
+  game: GameService;
 
   constructor(input: InputControlsService) {
     this.input = input;
@@ -28,13 +28,14 @@ export class AppComponent {
   ngAfterViewInit(): void {
     this.initializeCanvas();
     this.initializeTileset();
-    this.input.moveToCallback = (left,top) => {
+    this.input.moveToCallback = (left, top) => {
       left -= this.gameCanvas.nativeElement.offsetLeft;
       top -= this.gameCanvas.nativeElement.offsetTop;
       let x = Math.floor(left / this.tileSize);
       let y = Math.floor(top / this.tileSize);
       console.log("cb na", x, y);
-      
+      this.game.goTo(x, y);
+
     }
     //this.playMusic();
 
