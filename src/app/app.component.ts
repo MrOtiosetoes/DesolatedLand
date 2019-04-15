@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ViewChild, ElementRef } from '@angular/core';
 import { HostListener } from '@angular/core';
+import { InputControlsService } from './input-controls.service';
+import { GameService } from './game.service';
 
 @Component({
   selector: 'app-root',
@@ -12,81 +14,95 @@ export class AppComponent {
   @ViewChild('gameCanvas') gameCanvas: ElementRef;
   @ViewChild('audio') bgAudio: ElementRef;
   public context: CanvasRenderingContext2D;
-  x = 0;
-  y = 0;
   stepSize = 2;
-  up = false;
-  down = false;
-  left = false;
-  right = false;
   image;
   tileSize = 32;
-  width = 20;
-  height = 20;
+  input: InputControlsService;
+  game: GameService;
+
+  constructor(input: InputControlsService) {
+    this.input = input;
+    this.game = new GameService();
+  }
 
   ngAfterViewInit(): void {
-    this.context = (<HTMLCanvasElement>this.gameCanvas.nativeElement).getContext('2d');
-    this.image = new Image();
-    this.image.src = '/assets/tileset.png';
-    this.gameCanvas.nativeElement.width = this.tileSize * this.width;
-    this.gameCanvas.nativeElement.height = this.tileSize * this.height;
+    this.initializeCanvas();
+    this.initializeTileset();
+    this.input.moveToCallback = (left, top) => {
+      left -= this.gameCanvas.nativeElement.offsetLeft;
+      top -= this.gameCanvas.nativeElement.offsetTop;
+      let x = Math.floor(left / this.tileSize);
+      let y = Math.floor(top / this.tileSize);
+      console.log("cb na", x, y);
+      this.game.goTo(x, y);
 
-    this.playMusic();
+    }
+    //this.playMusic();
+
     setInterval(() => {
       this.handleInput();
       this.drawCanvas();
     }, 50);
   }
 
+  private initializeTileset() {
+    this.image = new Image();
+    this.image.src = '/assets/tileset.png';
+  }
+
+  private initializeCanvas() {
+    let canvas = (<HTMLCanvasElement>this.gameCanvas.nativeElement);
+    this.context = canvas.getContext('2d');
+    canvas.addEventListener("touchend", (e) => {
+      this.input.touchEnd(e);
+    });
+    canvas.addEventListener("touchstart", (e) => {
+      this.input.touchStart(e);
+    });
+    canvas.addEventListener("touchmove", (e) => {
+      this.input.touchMove(e);
+    });
+    this.gameCanvas.nativeElement.width = this.tileSize * this.game.width;
+    this.gameCanvas.nativeElement.height = this.tileSize * this.game.height;
+  }
+
   private playMusic() {
-    
+
     let audio = new Audio();
     audio.src = "/assets/audio/tfh.mp3";
     audio.load();
-   audio.play().then(() => {console.log("ok")}).catch((e) => {
-     console.log("err", e);
-   }
-   );
+    audio.play().then(() => { console.log("ok") }).catch((e) => {
+      console.log("err", e);
+    }
+    );
   }
 
   private handleInput() {
-    if (this.up)
-      this.y -= this.stepSize;
-    if (this.down)
-      this.y += this.stepSize;
-    if (this.left)
-      this.x -= this.stepSize;
-    if (this.right)
-      this.x += this.stepSize;
+    if (this.input.up) this.game.moveUp();
+    if (this.input.down) this.game.moveDown();
+    if (this.input.left) this.game.moveLeft();
+    if (this.input.right) this.game.moveRight();
   }
 
   drawCanvas() {
-    for (var y = 0; y < this.height; y++) {
-      for (var x = 0; x < this.width; x++) {
+    for (var y = 0; y < this.game.height; y++) {
+      for (var x = 0; x < this.game.width; x++) {
 
-        this.context.drawImage(this.image, 0, 0, this.tileSize, this.tileSize, x*this.tileSize, y*this.tileSize, this.tileSize, this.tileSize);
+        this.context.drawImage(this.image, 0, 0, this.tileSize, this.tileSize, x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
       }
 
     }
     this.context.fillStyle = 'rgb(255, 165, 0)';
-    this.context.fillRect(this.x, this.y, this.tileSize, this.tileSize);
+    this.context.fillRect(this.game.x * this.tileSize, this.game.y * this.tileSize, this.tileSize, this.tileSize);
   }
 
   @HostListener('window:keydown', ['$event'])
   handleKeyDownEvent(event: KeyboardEvent) {
-    console.log("down: ", event.key);
-    if (event.key == "ArrowUp") this.up = true;
-    if (event.key == "ArrowDown") this.down = true;
-    if (event.key == "ArrowLeft") this.left = true;
-    if (event.key == "ArrowRight") this.right = true;
+    this.input.handleKeyDownEvent(event);
   }
 
   @HostListener('window:keyup', ['$event'])
   handleKeyUpEvent(event: KeyboardEvent) {
-    console.log("up: ", event.key);
-    if (event.key == "ArrowUp") this.up = false;
-    if (event.key == "ArrowDown") this.down = false;
-    if (event.key == "ArrowLeft") this.left = false;
-    if (event.key == "ArrowRight") this.right = false;
+    this.input.handleKeyUpEvent(event);
   }
 }
