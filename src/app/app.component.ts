@@ -106,8 +106,9 @@ export class AppComponent {
       }
 
     }
-    this.context.fillStyle = 'rgb(255, 165, 0)';
-    this.context.fillRect(this.game.x * this.tileSize, this.game.y * this.tileSize, this.tileSize, this.tileSize);
+    let sx = 0;
+    let sy = 1;
+    this.context.drawImage(this.image, sx * this.tileSize, sy * this.tileSize, this.tileSize, this.tileSize, this.game.x * this.tileSize, this.game.y * this.tileSize, this.tileSize, this.tileSize);
   }
 
   @HostListener('window:keydown', ['$event'])

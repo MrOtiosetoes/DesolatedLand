@@ -10,7 +10,7 @@ export class GameService {
 
   x = 10;
   y = 10;
-  path : Function[];
+  path: Function[];
 
   constructor() {
     this.level = new Array();
@@ -18,7 +18,7 @@ export class GameService {
       let row = new Array();
       for (var x = 0; x < this.width; x++) {
         let tile = 0;
-        if (x == 0 || x ==this.width || y ==0 || y ==this.height) tile = 1;
+        if (x == 0 || x == this.width - 1 || y == 0 || y == this.height - 1) tile = 1;
         row.push(tile);
       }
       this.level.push(row);
