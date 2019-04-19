@@ -16,8 +16,10 @@ export class GameService {
     this.level = new Array();
     for (var y = 0; y < this.height; y++) {
       let row = new Array();
-      for (var x = 0; x < this.height; x++) {
-        row.push(0);
+      for (var x = 0; x < this.width; x++) {
+        let tile = 0;
+        if (x == 0 || x ==this.width || y ==0 || y ==this.height) tile = 1;
+        row.push(tile);
       }
       this.level.push(row);
     }
@@ -61,21 +63,25 @@ export class GameService {
 
   moveUp() {
     if (this.y == 0) return;
+    if (this.level[this.x][this.y - 1] == 1) return;
     this.y -= 1;
   }
 
   moveDown() {
     if (this.y == this.height) return;
+    if (this.level[this.x][this.y + 1] == 1) return;
     this.y += 1;
   }
 
   moveLeft() {
     if (this.x == 0) return;
+    if (this.level[this.x - 1][this.y] == 1) return;
     this.x -= 1;
   }
 
   moveRight() {
     if (this.x == this.width) return;
+    if (this.level[this.x + 1][this.y] == 1) return;
     this.x += 1;
   }
 }

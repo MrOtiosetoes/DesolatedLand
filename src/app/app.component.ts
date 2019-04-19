@@ -87,8 +87,22 @@ export class AppComponent {
   drawCanvas() {
     for (var y = 0; y < this.game.height; y++) {
       for (var x = 0; x < this.game.width; x++) {
-
+        let sx = 0;
+        let sy = 0;
+        
         this.context.drawImage(this.image, 0, 0, this.tileSize, this.tileSize, x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+        
+        if ( y < this.game.height && this.game.level[x][y - 1] == 1) {
+          sx = 1;
+          sy = 1;
+          this.context.drawImage(this.image, sx * this.tileSize, sy * this.tileSize, this.tileSize, this.tileSize, x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+        }
+        if (this.game.level[x][y] == 1) {
+          sx = 1;
+          sy = 0;
+          this.context.drawImage(this.image, sx * this.tileSize, sy * this.tileSize, this.tileSize, this.tileSize, x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+
+        }
       }
 
     }
